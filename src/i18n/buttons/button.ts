@@ -1,4 +1,4 @@
-import data from '../../datasource/data.json';
+import data from '../../datasource/Animal.json';
 import { localised } from '../en/localised-strings';
 import _ from 'lodash';
 
