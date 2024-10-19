@@ -4,6 +4,7 @@ import { LocalizationService } from 'src/localization/localization.service';
 import { MessageService } from 'src/message/message.service';
 import { localised } from 'src/i18n/en/localised-strings';
 //import data from '../datasource/Space.json';
+import axios from 'axios';
 import {
   createMainTopicButtons,
   createSubTopicButtons,
@@ -77,7 +78,7 @@ export class SwiftchatMessageService extends MessageService {
   }
 
   async sendSubTopics(from: string, topicName: string) {
-    
+  
     const messageData = createSubTopicButtons(from, topicName);
     const response = await this.sendMessage(
       this.baseUrl,
@@ -96,18 +97,48 @@ export class SwiftchatMessageService extends MessageService {
     );
     return response;
   }
+  async newscorecard(from: string, score: number, totalQuestions: number, badge:string) {
+    //const messageData = createDifficultyButtons(from);
+    const currentDate = new Date()
+    const date =currentDate.getDate()
+    const month =currentDate.getMonth()+1
+    const year =currentDate.getFullYear()%100
+    const payload= {
+      to: from,
+      type: "scorecard",
+      scorecard: {
+          theme: "theme4",
+          background: "teal",
+          performance: "high",
+          share_message: "Hey! I got a badge in the Weekly Quiz. Click the link below to take the quiz.",
+          text1: `Quiz-${date}-${month}-${year}`,
+          text2: "Wow! You did an awesome job.",
+          text3: `${score}/10`,
+          text4: `${badge} badge`,
+          score: `${score*10} %`,
+          animation: "confetti"
+      }
+  }
+  const response = await axios.post(this.baseUrl, payload, {
+    headers: {
+      Authorization: `Bearer ${this.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+    await this.sendScore(from,score,totalQuestions,badge);
+    console.log(response)
+    return response;
+  }
 
   async sendQuestion(
     from: string,
     selectedMainTopic: string,
     selectedSubtopic: string,
-    selectedDifficulty: string,
   ) {
     const { messageData, randomSet } = await questionButton(
       from,
       selectedMainTopic,
       selectedSubtopic,
-      selectedDifficulty,
     );
     if (!messageData) {
       return;
@@ -144,7 +175,7 @@ export class SwiftchatMessageService extends MessageService {
     subtopicName: string,
   ) {
     let completeDescription = '';
-    description.forEach((desc, index) => {
+    description.slice(1).forEach((desc, index) => {
       // Add each element to the string, ensuring no commas are added
       completeDescription += desc;
     });
@@ -160,68 +191,12 @@ export class SwiftchatMessageService extends MessageService {
     );
     return response;
   }
-  // async handleViewChallenges(from: string, userData: any): Promise<void>{
-  //   try {
-      
-  //     const topStudents = await this.userService.getTopStudents(
-  //       userData.Botid,
-  //       userData.currentTopic,
-  //       userData.setNumber,
-  //     );
-  //     if (topStudents.length === 0) {
-  
-  //       await this.swiftchatMessageService.sendMessage({
-  //         to: from,
-  //         type: 'text',
-  //         text: { body: 'No challenges have been completed yet.' },
-  //       });
-  //       return;
-  //     }
-  //     // Format the response message with the top 3 students
-  //     let message = 'Top 3 Users:\n\n';
-  //     topStudents.forEach((student, index) => {
-  //       const totalScore = student.score || 0;
-  //       const studentName = student.name || 'Unknown';
-      
-  //       let badge = '';
-  //       if (totalScore === 10) {
-  //         badge = 'Gold 🥇';
-  //       } else if (totalScore >= 7) {
-  //         badge = 'Silver 🥈';
-  //       } else if (totalScore >= 5) {
-  //         badge = 'Bronze 🥉';
-  //       } else {
-  //         badge = 'No';
-  //       }
 
-  //       message += `${index + 1}. ${studentName}\n`;
-  //       message += `    Score: ${totalScore}\n`;
-  //       message += `    Badge: ${badge}\n\n`;
-  //     });
-
-  //     // Send the message with the top students' names, scores, and badges
-  //     await this.sendMessage(this.baseUrl,{
-  //       to: from,
-  //       type: 'text',
-  //       text: { body: message },
-  //     }, this.apiKey);
-  //   } catch (error) {
-  //     console.error('Error handling View Challenges:', error);
-  //     await this.sendMessage(this.baseUrl,{
-  //       to: from,
-  //       type: 'text',
-  //       text: {
-  //         body: 'An error occurred while fetching challenges. Please try again later.',
-  //       },
-  //     }, this.apiKey);
-  //   }
-  // }
   async checkAnswer(
     from: string,
     answer: string,
     selectedMainTopic: string,
     selectedSubtopic: string,
-    selectedDifficulty: string,
     randomSet: string,
     currentQuestionIndex: number,
   ) {
@@ -230,7 +205,6 @@ export class SwiftchatMessageService extends MessageService {
       answer,
       selectedMainTopic,
       selectedSubtopic,
-      selectedDifficulty,
       randomSet,
       currentQuestionIndex,
     );
@@ -253,7 +227,6 @@ export class SwiftchatMessageService extends MessageService {
     answer: string,
     selectedMainTopic: string,
     selectedSubtopic: string,
-    selectedDifficulty: string,
     randomSet: string,
     currentQuestionIndex: number,
   ) {
@@ -261,7 +234,6 @@ export class SwiftchatMessageService extends MessageService {
       from,
       selectedMainTopic,
       selectedSubtopic,
-      selectedDifficulty,
       randomSet,
       currentQuestionIndex,
     );
