@@ -1,6 +1,16 @@
-#  Chatbot NestJS Boilerplate
+# 🐘 Animal Quiz App
 
-In this comprehensive guide, we introduce you to our Chatbot Starter Kit, a resource designed to empower developers in building robust chatbot applications. Whether you are just starting your journey in chatbot development or are an experienced developer seeking an efficient solution, this document is your go-to resource for mastering the use of our starter kit.
+## 📖 Description
+The **Animal Quiz App** is an interactive learning tool designed to educate users about various animals through engaging quizzes. Covering mammals like **elephants, lions, giraffes, and tigers**, the app provides informative descriptions and multiple-choice questions to test users' knowledge. Each animal category includes facts about their habitat, diet, behaviors, and unique characteristics, making learning fun and engaging for all ages.
+
+## 🌟 Features
+- 🧠 **Informative Content**: Learn about different animals with rich descriptions.  
+- 🎯 **Multiple Quiz Levels**: Challenge yourself with different question sets.  
+- 📊 **Interactive Learning**: Gain knowledge through detailed explanations after each question.  
+- 🌍 **Diverse Topics**: Covers a wide range of species with scientifically accurate information.
+
+Perfect for students, wildlife enthusiasts, and anyone curious about the animal kingdom! 🐾✨
+
 
 
 # Prerequisites
@@ -18,11 +28,11 @@ Click the "Fork" button in the upper right corner of the repository page. This w
 
 * Clone this repository:
 ```
-https://github.com/madgicaltechdom/chatbot-nestjs-boilerplate.git
+https://github.com/MadgicalSwift/animal-fact-bot.git
 ```
 * Navigate to the Project Directory:
 ```
-cd chatbot-nestjs-boilerplate
+cd animal-fact-bot
 ```
 * Install Project Dependencies:
 ```bash
@@ -58,18 +68,18 @@ $ npm run test:cov
 # Add the following environment variables:
 
 ```bash
-API_URL = API_URL
-BOT_ID = BOT_ID
-API_KEY = API_KEY
-DATA_BASE=DATA_BASE
-DB_HOST=DB_HOST
-DB_USER=DB_USER
-DB_PASSWORD=DB_PASSWORD
+USERS_TABLE=
+REGION= 
+ACCESS_KEY_ID= 
+SECRET_ACCESS_KEY=
+API_URL= 
+BOT_ID=
+API_KEY= 
 ```
 # API Endpoints
 ```
 POST api/message: Endpoint for handling user requests. 
-Get/api/status: Endpoint for checking the status of  api
+GET /api/status: Endpoint for checking the status of  api
 ```
 # folder structure
 
@@ -91,23 +101,32 @@ src/
 │   └── utils/
 │       └── date.service.ts
 ├── config/
-│   └── database.config.ts
+│   └── database-config.service.ts
+├── datasource/
+│   └── Animal.json
 ├── i18n/
+│   ├── buttons/
+│   │   └── button.ts
 │   ├── en/
 │   │   └── localised-strings.ts
 │   └── hi/
 │       └── localised-strings.ts
+├── intent/
+│   └── intent.classifier.ts
 ├── localization/
 │   ├── localization.service.ts
 │   └── localization.module.ts
 │
 ├── message/
-│   ├── message.service.ts
+│   ├── message.module.ts
 │   └── message.service.ts
+└── mixpanel/
+│   ├── mixpanel.services.ts
+│   └── mixpanel.service.specs.ts 
 └── model/
 │   ├── user.entity.ts
-│   ├──user.module.ts
-│   └──query.ts
+│   ├── user.module.ts
+│   └── user.service.ts
 └── swiftchat/
     ├── swiftchat.module.ts
     └── swiftchat.service.ts
