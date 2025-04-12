@@ -3,10 +3,10 @@ import { localised } from '../en/localised-strings';
 import _ from 'lodash';
 
 export function createMainTopicButtons(from: string) {
-  // Extract topic names from the data
+ 
   const topics = data.topics.map((topic) => topic.topicName);
 
-  // Create buttons for each topic
+
   const buttons = topics.map((topicName) => ({
     type: 'solid',
     body: topicName,
@@ -30,10 +30,10 @@ export function createMainTopicButtons(from: string) {
 }
 
 export function createSubTopicButtons(from: string, topicName: string) {
-  // Find the topic in the data
+ 
   const topic = data.topics.find((topic) => topic.topicName === topicName);
 
-  // If the topic exists, create buttons for each subtopic
+ 
   if (topic && topic.subtopics) {
     const buttons = topic.subtopics.map((subtopic) => ({
       type: 'solid',
@@ -190,7 +190,7 @@ export function questionButton(
     return;
   }
 
-  // Randomly select a question set based on difficulty level
+
   const questionSet = _.sample(questionSets);
   if (!questionSet) {
     
@@ -245,21 +245,21 @@ export function answerFeedback(
     
   }
 
-  // Find the question set by its level and set number
+
 
   const questionSet = subtopic.questionSets.find(
     (qs) =>
       qs.setNumber === parseInt(randomSet),
   );
-  // console.log(questionSet);
+ 
   if (!questionSet) {
    
   }
-  // console.log(currentQuestionIndex);
+
   const question = questionSet.questions[currentQuestionIndex];
   
 
-  // console.log(question);
+ 
   const explanation = question.explanation;
   if (!explanation) {
     
@@ -295,7 +295,7 @@ export function buttonWithScore(
       body: {
         type: 'text',
         text: {
-          //body: localised.score(score, totalQuestions, badge),
+         
           body: "congrats! you have completed the quiz"
         },
       },
@@ -327,7 +327,7 @@ export function optionButton(
   randomSet: string,
   currentQuestionIndex: number,
 ) {
-  // Find the selected topic
+
   const topic = data.topics.find(
     (topic) => topic.topicName === selectedMainTopic,
   );
@@ -337,7 +337,7 @@ export function optionButton(
     return;
   }
 
-  // Find the selected subtopic
+ 
   const subtopic = topic.subtopics.find(
     (subtopic) => subtopic.subtopicName === selectedSubtopic,
   );
@@ -347,7 +347,7 @@ export function optionButton(
     return;
   }
 
-  // Find the question set based on difficulty and set number
+
   const questionSet = subtopic.questionSets.find(
     (set) =>
        set.setNumber === parseInt(randomSet),
@@ -357,7 +357,7 @@ export function optionButton(
     return;
   }
 
-  // Check if the current question index is valid
+
   if (
     currentQuestionIndex < 0 ||
     currentQuestionIndex >= questionSet.questions.length
@@ -366,7 +366,7 @@ export function optionButton(
     return;
   }
 
-  // Retrieve the question at the current index
+
   const question = questionSet.questions[currentQuestionIndex];
   const shuffledOptions = _.shuffle(question.options);
 

@@ -40,27 +40,27 @@ export class ChatbotService {
   }
 
   public async processMessage(body: any): Promise<any> {
-    // Destructure 'from', 'text', and 'button_response' from the body
+  
     const { from, text, button_response } = body;
 
-    // Retrieve botID from environment variables
+
     const botID = process.env.BOT_ID;
     let userData = await this.userService.findUserByMobileNumber(from, botID);
 
-    // If no user data is found, create a new user
+   
     if (!userData) {
       await this.userService.createUser(from, 'english', botID);
       userData = await this.userService.findUserByMobileNumber(from, botID);
     }
   
-    // Convert plain user data to a User class instance
+  
     const user = plainToClass(User, userData);
 
-    // Handle button response from the user
+  
     if (button_response) {
       const buttonBody = button_response.body;
 
-      // Mixpanel tracking data
+     
       const trackingData = {
         distinct_id: from,
         button: buttonBody,
@@ -69,7 +69,7 @@ export class ChatbotService {
 
       this.mixpanel.track('Button_Click', trackingData);
 
-      // Handle 'Main Menu' button - reset user quiz data and send welcome message
+   
       if (buttonBody === localised.mainMenu) {
         
         user.selectedSet = null;
@@ -79,14 +79,14 @@ export class ChatbotService {
         await this.message.sendInitialTopics(from);
         return 'ok';
       }
-      // Handle 'Retake Quiz' button - reset quiz progress and send the first question
+    
       if (buttonBody === localised.retakeQuiz) {
         user.questionsAnswered = 0;
         user.score = 0;
         await this.userService.saveUser(user);
         const selectedMainTopic = user.selectedMainTopic;
         const selectedSubtopic = user.selectedSubtopic;
-        // const selectedDifficulty = user.selectedDifficulty;
+      
         const randomSet = user.selectedSet;
         await this.message.getQuestionBySet(
           from,
@@ -103,10 +103,10 @@ export class ChatbotService {
         await this.message.endMessage(from);
         return 'ok';
       }
-      // Handle 'More Explanation' button - send complete explanation for the subtopic
+    
       if (buttonBody === localised.Moreexplanation) {
         const topic = user.selectedSubtopic;
-        // Find the selected subtopic in the list of topics
+       
         const subtopic = this.topics
           .flatMap((topic) => topic.subtopics)
           .find((subtopic) => subtopic.subtopicName === topic);
@@ -120,7 +120,7 @@ export class ChatbotService {
         }
         return 'ok';
       }
-      // Handle 'Test Yourself' button - show difficulty options to the user
+    
 
       if (buttonBody === localised.startQuiz) {
         
@@ -142,12 +142,12 @@ export class ChatbotService {
         return 'ok';
       }
 
-      // Handle quiz answer submission - check if the user is answering a quiz question
+     
       if ( user.selectedSet) {
         
         const selectedMainTopic = user.selectedMainTopic;
         const selectedSubtopic = user.selectedSubtopic;
-        // const selectedDifficulty = user.selectedDifficulty;
+      
         const randomSet = user.selectedSet;
         const currentQuestionIndex = user.questionsAnswered;
         const { result } = await this.message.checkAnswer(
@@ -159,12 +159,12 @@ export class ChatbotService {
           currentQuestionIndex,
         );
 
-        // Update user score and questions answered
+      
         user.score += result;
         user.questionsAnswered += 1;
         await this.userService.saveUser(user);
 
-        // If the user has answered 10 questions, send their final score
+        
         if (user.questionsAnswered >= 10) {
 
           let badge = '';
@@ -178,7 +178,7 @@ export class ChatbotService {
             badge = 'Novice 🔰';
           }
 
-          // Store the data to be stored in database
+        
           const challengeData = {
             topic: selectedMainTopic,
             subTopic:selectedSubtopic,
@@ -190,26 +190,18 @@ export class ChatbotService {
               },
             ],
           };
-          // Save the challenge data into the database
+         
           await this.userService.saveUserChallenge(
             from,
             userData.Botid,
             challengeData,
           );
-          console.log("Challenge Data:",challengeData)
-          // console.log("user:", user )
+         
           await this.message.newscorecard(from,user.score,user.questionsAnswered,badge)
-          //await this.message.endMessage(from)
-          /*await this.message.sendScore(
-            from,
-            user.score,
-            user.questionsAnswered,
-            badge
-          );*/
-
+         
           return 'ok';
         }
-        // Send the next quiz question
+      
         await this.message.getQuestionBySet(
           from,
           buttonBody,
@@ -222,20 +214,20 @@ export class ChatbotService {
         return 'ok';
       }
 
-      // Handle topic selection - find the main topic and save it to the user data
+     
       const topic = this.topics.find((topic) => topic.topicName === buttonBody);
-      // console.log("topic", topic);
+     
       if (topic) {
         const mainTopic = topic.topicName;
 
         user.selectedMainTopic = mainTopic;
 
         await this.userService.saveUser(user);
-        // console.log("Main topic:", mainTopic)
+       
 
         await this.message.sendSubTopics(from, mainTopic);
       } else {
-        // Handle subtopic selection - find the subtopic and send an explanation
+       
         const subtopic = this.topics
           .flatMap((topic) => topic.subtopics)
           .find((subtopic) => subtopic.subtopicName === buttonBody);
@@ -249,7 +241,7 @@ export class ChatbotService {
           user.selectedSubtopic = subtopicName;
 
           await this.userService.saveUser(user);
-          // console.log(subtopicName, description)
+         
           await this.message.sendExplanation(from, description, subtopicName);
         } else {
           
@@ -259,9 +251,9 @@ export class ChatbotService {
       return 'ok';
     }
 
-    // Handle text message input - reset user data and send a welcome message
+   
     else{
-      console.log(text.body)
+   
       if (localised.validText.includes(text.body)) {
         const userData = await this.userService.findUserByMobileNumber(
           from,
@@ -277,7 +269,7 @@ export class ChatbotService {
         user.score=0; 
         user.questionsAnswered=0;
         await this.userService.saveUser(user);   
-        console.log("user data -",userData)
+       
         if(userData.name==null){
           await this.message.sendWelcomeMessage(from, user.language);
           await this.message.sendName(from);
@@ -299,7 +291,7 @@ export class ChatbotService {
   }
   async handleViewChallenges(from: string, userData: any): Promise<void>{
     try { 
-      console.log(userData)
+     
       const topStudents = await this.userService.getTopStudents(
         userData.Botid,
         userData.selectedMainTopic,
@@ -315,7 +307,7 @@ export class ChatbotService {
         }, this.apiKey);
         return;
       }
-      // Format the response message with the top 3 students
+    
       let message = 'Top 3 Users:\n\n';
       topStudents.forEach((student, index) => {
         const totalScore = student.score || 0;
@@ -337,7 +329,7 @@ export class ChatbotService {
         message += `    Badge: ${badge}\n\n`;
       });
 
-      // Send the message with the top students' names, scores, and badges
+    
       await this.swiftchatMessageService.sendMessage(this.baseUrl,{
         to: from,
         type: 'text',

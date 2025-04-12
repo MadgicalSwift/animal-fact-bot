@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { LocalizationService } from 'src/localization/localization.service';
 import { MessageService } from 'src/message/message.service';
 import { localised } from 'src/i18n/en/localised-strings';
-//import data from '../datasource/Space.json';
+
 import axios from 'axios';
 import {
   createMainTopicButtons,
@@ -98,7 +98,7 @@ export class SwiftchatMessageService extends MessageService {
     return response;
   }
   async newscorecard(from: string, score: number, totalQuestions: number, badge:string) {
-    //const messageData = createDifficultyButtons(from);
+   
     const currentDate = new Date()
     const date =currentDate.getDate()
     const month =currentDate.getMonth()+1
@@ -126,7 +126,7 @@ export class SwiftchatMessageService extends MessageService {
     },
   });
     await this.sendScore(from,score,totalQuestions,badge);
-    console.log(response)
+    
     return response;
   }
 
@@ -176,7 +176,7 @@ export class SwiftchatMessageService extends MessageService {
   ) {
     let completeDescription = '';
     description.slice(1).forEach((desc, index) => {
-      // Add each element to the string, ensuring no commas are added
+    
       completeDescription += desc;
     });
     const messageData = createTestYourSelfButton(
